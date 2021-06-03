@@ -1,5 +1,6 @@
 img="";
 status="";
+objects = [];
 
 function preload(){
     img = loadImage('bedroom.jpg');
@@ -12,14 +13,11 @@ function setup() {
     document.getElementById("status").innerHTML = "Status : Detecting Objects";
 }
 
-function draw() {
-    image(img, 0, 0, 640, 420);
-}
 
-function modelLoaded () {
+function modelLoaded() {
     console.log("Model Loaded!");
     status=true;
-    objectDetector.detect(img, gotResult)
+    objectDetector.detect(img, gotResult);
 }
 
 function gotResult(error, results) {
@@ -27,4 +25,26 @@ function gotResult(error, results) {
         console.log(error);
     }
     console.log(results);
+    objects = results;
+}
+
+
+function draw() {
+    image(img, 0, 0, 640, 420);
+
+    if(status != "")
+    {
+        for (i=0; i < objects.length; i++)
+        {
+            document.getElementById("status").innerHTML = "Status : Objects Detected";
+
+            fill("red");
+            percent = floor(objects[i].confidence * 100);
+            text(objects[i].label + " "+ percent + "%", objects[i].x, objects[i].y);
+            noFill();
+            stroke("red");
+            rect(objects[i].x, objects[i].y, objects[i].width, objects[i].height);
+        
+    }
+}
 }
